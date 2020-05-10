@@ -1,0 +1,15 @@
+{
+  "employees" : [
+    {
+      "uuid" : "0d8fcc12-4d0c-425c-8355-390b312b909c",
+      "full_name" : "Jane Doe",
+      "phone_number" : "1-800-273-8255",
+      "email_address" : "jane@example.com",
+      "biography" : "Chief Happiness Officer.",
+      "photo_url_small" : "https://example.com/small.jpg",
+      "photo_url_large" : "https://example.com/large.jpg",
+      "team" : "S-Team",
+      "employee_type" : "FULL_TIME"
+    }
+  ]
+}
