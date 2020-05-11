@@ -25,16 +25,16 @@ class EmployeeListAdapter(context: Context) :
 
     class EmployeeListHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val fullNameView: TextView = itemView.findViewById(
-            R.id.employee_full_name
+            R.id.full_name
         )
         val teamView: TextView = itemView.findViewById(
-            R.id.employee_team
+            R.id.team
         )
         val phoneNumber: TextView = itemView.findViewById(
-            R.id.employee_phone_number
+            R.id.phone_number
         )
         val email: TextView = itemView.findViewById(
-            R.id.employee_email
+            R.id.email
         )
         val avatar: ImageView = itemView.findViewById(
             R.id.employee_avatar
