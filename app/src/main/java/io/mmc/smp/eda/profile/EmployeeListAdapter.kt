@@ -1,18 +1,18 @@
 package io.mmc.smp.eda.profile
 
 import android.content.Context
-import android.telephony.PhoneNumberUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
 import io.mmc.smp.eda.R
 import io.mmc.smp.eda.clients.sqmobileinterview.EmployeeList
-import java.net.URL
-import java.util.*
+import io.mmc.smp.eda.viewutils.formatAsPhoneNumber
+import io.mmc.smp.eda.viewutils.loadAvatar
+
+typealias ItemClickListener = (Int) -> Unit
 
 class EmployeeListAdapter(context: Context) :
     RecyclerView.Adapter<EmployeeListAdapter.EmployeeListHolder>() {
@@ -23,7 +23,17 @@ class EmployeeListAdapter(context: Context) :
             notifyDataSetChanged()
         }
 
-    class EmployeeListHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+    private var itemClickListener: ItemClickListener? = null
+
+    fun setItemClickListener(listener: ItemClickListener?) {
+        itemClickListener = listener
+    }
+
+    class EmployeeListHolder(
+        itemView: View,
+        itemClickListener: ItemClickListener?
+    ) : RecyclerView.ViewHolder(itemView) {
         val fullNameView: TextView = itemView.findViewById(
             R.id.full_name
         )
@@ -39,6 +49,15 @@ class EmployeeListAdapter(context: Context) :
         val avatar: ImageView = itemView.findViewById(
             R.id.employee_avatar
         )
+
+        init {
+            itemClickListener?.let {
+                itemView.setOnClickListener {
+                    itemClickListener(adapterPosition)
+                }
+            }
+
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EmployeeListHolder {
@@ -46,7 +65,8 @@ class EmployeeListAdapter(context: Context) :
             R.layout.employee_list_item, parent, false
         )
         return EmployeeListHolder(
-            itemView
+            itemView,
+            itemClickListener
         )
     }
 
@@ -59,20 +79,7 @@ class EmployeeListAdapter(context: Context) :
         holder.fullNameView.text = employee.fullName
         holder.teamView.text = employee.team
         holder.email.text = employee.emailAddress
-        holder.phoneNumber.text = employee.phoneNumber?.let(this::fmtPhoneNumber)
-        employee.photoUrlSmall?.let(avatarLoader(holder.avatar))
-        // TODO add binding to launch detail fragment on click
+        holder.phoneNumber.text = employee.phoneNumber?.formatAsPhoneNumber()
+        employee.photoUrlSmall?.let { holder.avatar.loadAvatar(it) }
     }
-
-    // need to investigate the performance impact of this partial function call
-    private fun avatarLoader(imageView: ImageView) = { url: URL ->
-        Picasso.get()
-            .load(url.toString())
-            .into(imageView)
-    }
-
-    private fun fmtPhoneNumber(number: String) = PhoneNumberUtils.formatNumber(
-        number,
-        Locale.getDefault().country
-    )
 }

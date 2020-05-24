@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +14,6 @@ import io.mmc.smp.eda.MainApplication
 import io.mmc.smp.eda.R
 import io.mmc.smp.eda.clients.sqmobileinterview.EmployeeList
 import io.mmc.smp.eda.viewutils.getViewModel
-import java.lang.IllegalStateException
 
 
 class EmployeeListFragment : Fragment() {
@@ -45,7 +44,8 @@ class EmployeeListFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         adapter = EmployeeListAdapter(fragmentContext)
-        layoutManager = LinearLayoutManager(fragmentContext)
+        adapter.setItemClickListener(this::onSelect)
+        layoutManager = LinearLayoutManager(context)
 
         employeeListUpdateListener = Observer { employees ->
             adapter.employeeList = employees
@@ -67,5 +67,15 @@ class EmployeeListFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         viewModel.employees.removeObserver(employeeListUpdateListener)
+    }
+
+    private fun onSelect(position: Int) {
+        val activity = fragmentContext as AppCompatActivity
+        val detailFragment: Fragment = EmployeeDetailFragment(adapter.employeeList[position])
+        activity.supportFragmentManager.beginTransaction()
+            .replace(R.id.main, detailFragment)
+            .addToBackStack(null)
+            .commit()
+
     }
 }
